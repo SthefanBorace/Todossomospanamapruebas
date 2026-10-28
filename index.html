@@ -521,6 +521,8 @@ footer a{word-break:break-all}
 .dl-list a{font-weight:600;color:var(--red);text-decoration:none}
 .dl-empty{margin:14px 0 0;font-size:14px;color:var(--muted)}
 .to-techo{display:block;font-size:11px;font-weight:500;color:var(--muted)}
+.points small{display:block;margin-top:2px}
+.pt-ig{display:inline-block;margin-top:8px;font-size:13px;font-weight:600;color:var(--red);text-decoration:none}
 </style>
 </head>
 <body>
@@ -1020,10 +1022,10 @@ const CUENTA_DROP = { banco: 'BAC Credomatic', tipo: 'Cuenta de ahorros', titula
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const ARTISTA = { n: 'Mariana Spiegel', ig: 'mari.spiegel' };
 const DISENOS = [ { k: 'raspao', n: "Raspa'o", a: ARTISTA }, { k: 'pipa', n: "Agua'e pipa", a: ARTISTA }, { k: 'patacon', n: 'Patacón con ketchup', a: ARTISTA } ];
-const PUNTOS = [
-  { n: 'Ciudad de Panamá' },
-  { n: 'David, Chiriquí' },
-  { n: 'Chitré, Herrera', label: 'Chitré' },
+const PUNTOS = [   // n = nombre EXACTO del punto en la pestaña Puntos del Sheet (Bruce lo usa para la dirección y el contacto)
+  { n: 'Ciudad de Panamá', lugar: 'Casa Madre', ig: '' },
+  { n: 'David, Chiriquí', lugar: 'Officenter Plus · Interamericana', ig: '' },
+  { n: 'Chitré, Herrera', label: 'Chitré', nota: 'Te avisamos por WhatsApp cuando puedas retirar tu pedido.' },
 ];
 // =============================================
 (function(){
@@ -1068,8 +1070,8 @@ const PUNTOS = [
   paintShirt();
   $('sizeList').innerHTML=TALLAS.map(t=>`<span>${t}</span>`).join('');
   const puntosVivos=PUNTOS;
-  const pintarPuntos=()=>{$('pointList').innerHTML=puntosVivos.map(p=>`<div><b>${esc(p.label||p.n)}</b></div>`).join('');
-    const sel=$('fPoint'),cur=sel.value;sel.innerHTML='<option value="">Escoge dónde retirar *</option>'+puntosVivos.map(p=>`<option value="${esc(p.n)}">${esc(p.label||p.n)}</option>`).join('');sel.value=cur;};
+  const pintarPuntos=()=>{$('pointList').innerHTML=puntosVivos.map(p=>`<div><b>${esc(p.label||p.n)}</b>${p.lugar?`<small>${esc(p.lugar)}</small>`:''}${p.nota?`<small>${esc(p.nota)}</small>`:''}${p.ig?`<a class="pt-ig" href="https://www.instagram.com/${esc(p.ig)}/" target="_blank" rel="noopener">@${esc(p.ig)} ↗</a>`:''}</div>`).join('');
+    const sel=$('fPoint'),cur=sel.value;sel.innerHTML='<option value="">Escoge dónde retirar *</option>'+puntosVivos.map(p=>`<option value="${esc(p.n)}">${esc((p.label||p.n)+(p.lugar?' · '+p.lugar:''))}</option>`).join('');sel.value=cur;};
   pintarPuntos();
 
   document.querySelectorAll('[data-techo]').forEach(i=>i.src=TECHO_LOGO);
