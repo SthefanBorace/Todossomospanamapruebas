@@ -803,7 +803,7 @@ footer a{word-break:break-all}
         <div class="stepper"><button type="button" id="qMinus" aria-label="Menos">−</button><input id="fQty" name="cantidad" type="number" min="1" max="50" value="1" inputmode="numeric" aria-label="Cantidad"><button type="button" id="qPlus" aria-label="Más">+</button></div>
       </div>
 
-      <div class="sumbox"><div><small>Total a pagar</small><strong id="sumTotal">$5.00</strong></div><div style="text-align:right"><small>Para TECHO Panamá (70%)</small><b id="sumCausa">$3.50</b></div></div>
+      <div class="sumbox"><div><small>Total a pagar</small><strong id="sumTotal">$5.00</strong></div><div style="text-align:right"><small>El 70% va para TECHO</small></div></div>
 
       <div class="paybox">
         <b>1. Transfiere el total</b> <span style="color:var(--muted)">a la cuenta del primer drop</span>
@@ -1020,10 +1020,10 @@ const CUENTA_DROP = { banco: 'BAC Credomatic', tipo: 'Cuenta de ahorros', titula
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const ARTISTA = { n: 'Mariana Spiegel', ig: 'mari.spiegel' };
 const DISENOS = [ { k: 'raspao', n: "Raspa'o", a: ARTISTA }, { k: 'pipa', n: "Agua'e pipa", a: ARTISTA }, { k: 'patacon', n: 'Patacón con ketchup', a: ARTISTA } ];
-const PUNTOS = [                                             // ← editar con los puntos reales
-  { n: 'Ciudad de Panamá', d: 'Dirección por confirmar' },
-  { n: 'David, Chiriquí',  d: 'Dirección por confirmar' },
-  { n: 'Chitré, Herrera',  d: 'Dirección por confirmar' },
+const PUNTOS = [
+  { n: 'Ciudad de Panamá' },
+  { n: 'David, Chiriquí' },
+  { n: 'Chitré, Herrera', label: 'Chitré' },
 ];
 // =============================================
 (function(){
@@ -1067,9 +1067,9 @@ const PUNTOS = [                                             // ← editar con l
   $('shirtPick').addEventListener('click',e=>{const b=e.target.closest('button');if(b){shirtK=b.dataset.k;paintShirt();}});
   paintShirt();
   $('sizeList').innerHTML=TALLAS.map(t=>`<span>${t}</span>`).join('');
-  let puntosVivos=PUNTOS;
-  const pintarPuntos=()=>{$('pointList').innerHTML=puntosVivos.map(p=>`<div><b>${esc(p.n)}</b><small>${esc(p.d)}${p.h?' · '+esc(p.h):''}</small></div>`).join('');
-    const sel=$('fPoint'),cur=sel.value;sel.innerHTML='<option value="">Escoge dónde retirar *</option>'+puntosVivos.map(p=>`<option>${esc(p.n)}</option>`).join('');sel.value=cur;};
+  const puntosVivos=PUNTOS;
+  const pintarPuntos=()=>{$('pointList').innerHTML=puntosVivos.map(p=>`<div><b>${esc(p.label||p.n)}</b></div>`).join('');
+    const sel=$('fPoint'),cur=sel.value;sel.innerHTML='<option value="">Escoge dónde retirar *</option>'+puntosVivos.map(p=>`<option value="${esc(p.n)}">${esc(p.label||p.n)}</option>`).join('');sel.value=cur;};
   pintarPuntos();
 
   document.querySelectorAll('[data-techo]').forEach(i=>i.src=TECHO_LOGO);
@@ -1150,7 +1150,6 @@ const PUNTOS = [                                             // ← editar con l
       const prev=loaded?new Set(S.donations.map(d=>d.id)):null;
       if(loaded&&next.donations.length>S.donations.length)toast('Nuevo aporte recibido');
       S=next;seen=prev;loaded=true;render();
-      if(Array.isArray(S.puntos)&&S.puntos.length){puntosVivos=S.puntos;pintarPuntos();}
       if(dlg.open)upd();
     }catch(_){if(loaded)$('updated').textContent='Reintentando…';}
   }
@@ -1171,7 +1170,7 @@ const PUNTOS = [                                             // ← editar con l
     form.querySelectorAll('#designPick img').forEach((im,i)=>{im.src=k==='sueter'?IMG[DISENOS[i].k].art:IMG[DISENOS[i].k].stk;});
     form.querySelectorAll('input[name="talla"]').forEach(i=>i.disabled=k!=='sueter');
     const tot=qty*PRECIO[k];
-    $('sumTotal').textContent=fmt(tot); $('sumCausa').textContent=fmt(tot*PARA_TECHO);
+    $('sumTotal').textContent=fmt(tot);
     const pu=$('fPoint').value;
     form.querySelectorAll('input[name="diseno"]').forEach(r=>{const tallas=k==='sueter'?TALLAS:['-'];const sinStock=pu&&tallas.every(t=>dispo(k,r.value,t,pu)===0);r.disabled=!!sinStock;r.parentElement.classList.toggle('off',!!sinStock);});
     {const c=form.querySelector('input[name="diseno"]:checked');if(c&&c.disabled){const f=[...form.querySelectorAll('input[name="diseno"]')].find(r=>!r.disabled);if(f)f.checked=true;}}
